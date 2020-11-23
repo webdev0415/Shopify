@@ -37,8 +37,9 @@ export default function ProductTemplate(props) {
     const [product, setProduct] = useState(null)
     const [selectedVariant, setSelectedVariant] = useState(null)
     const { search, origin, pathname } = useLocation()
+    const [size, setSize] = useState("2x2")
+    const [finish, setFinish] = useState("Matte")
     const variantId = queryString.parse(search).variant
-
     useEffect(() => {
         getProductById(props.data.shopifyProduct.shopifyId)
             .then((result) => {
@@ -47,18 +48,30 @@ export default function ProductTemplate(props) {
             })
     }, [getProductById, setProduct, setSelectedVariant, props.data.shopifyProduct.shopifyId, variantId])
 
-    const handleVariantChange = (e) => {
-        const newVariant = product?.variants.find(v => v.id === e.target.value)
-        console.log("new", product?.variants, newVariant)
-        setSelectedVariant(newVariant)
-        navigate(`${origin}${pathname}?variant=${encodeURIComponent(newVariant.id)}`, {
-            replace: true
-        })
+    const handleVariantChange = () => {
+        const newVariant = product?.variants.filter(v => v.title.indexOf(size)!==-1 && v.title.indexOf(finish)!==-1)[0]
+        if (newVariant) {
+            setSelectedVariant(newVariant)
+            navigate(`${origin}${pathname}?variant=${encodeURIComponent(newVariant.id)}`, {
+                replace: true
+            })
+        }
+        
+    }
+    useEffect(()=>{
+        handleVariantChange()
+    },[size, finish])
+    const handleVariantSizeChange = (e) => {
+        setSize(e.target.value)
+        
+    }
+    const handleVariantFinishChange = (e) => {
+        setFinish(e.target.value)
+        
     }
     const separateString = (str) => {
        const res = str.split("/")
-        console.log("separate", res)
-        return res
+       return res
     }
 
     return (
@@ -79,21 +92,18 @@ export default function ProductTemplate(props) {
                             <>
                                 {product?.variants.length > 1 && 
                                     <div className="mt-5">
-                                        <label for="location" class="block text-lg leading-5 font-medium text-gray-700">Select Variant</label>
+                                        <label htmlFor="location" class="block text-lg leading-5 font-medium text-gray-700">Select Variant</label>
                                         <div className="grid grid-cols-4 grid-flow-col gap-4 mt-4">
                                         <div className="col-span-2">
                                         <label class="block">
                                           <span class="text-gray-700">Size: </span>
                                           <select 
-                                              onChange={handleVariantChange}
-                                              value={selectedVariant.id}
+                                              onChange={handleVariantSizeChange}
+                                              value={size}
                                               className="mt-3 w-48 form-select pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5"
                                           >
-                                            {product?.variants.map (v => (
-                                                    <option key={v.id} value={v.id}>
-                                                        {separateString(v.title)[0]}
-                                                    </option>
-                                            ))}
+                                            <option value="2x2">2x2</option>
+                                            <option value="3x3">3x3</option>
                                           </select>
                                         </label>
                                         </div>
@@ -102,15 +112,12 @@ export default function ProductTemplate(props) {
                                         <label class="block">
                                             <span class="text-gray-700">Finish: </span>
                                             <select 
-                                                onChange={handleVariantChange}
-                                                value={selectedVariant.id}
+                                                onChange={handleVariantFinishChange}
+                                                value={finish}
                                                 className="mt-3 w-48 form-select pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5"
                                             >
-                                            {product?.variants.map (v => (
-                                                    <option key={v.id} value={v.id}>
-                                                        {separateString(v.title)[1]}
-                                                    </option>
-                                            ))}
+                                            <option value="Matte">Matte</option>
+                                            <option value="Gloss">Gloss</option>
                                             </select>
                                         </label>
                                         
