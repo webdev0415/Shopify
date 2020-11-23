@@ -1,0 +1,21 @@
+.page article{
+    margin: 2rem 0;
+}
+
+.page div{
+    height: 15rem;
+}
+
+@media screen and (min-width:768px){
+    .page{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 2rem;
+    }
+}
+
+@media screen and (min-width:992px){
+    .page{
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
