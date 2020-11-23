@@ -49,12 +49,17 @@ export default function ProductTemplate(props) {
 
     const handleVariantChange = (e) => {
         const newVariant = product?.variants.find(v => v.id === e.target.value)
+        console.log("new", product?.variants, newVariant)
         setSelectedVariant(newVariant)
         navigate(`${origin}${pathname}?variant=${encodeURIComponent(newVariant.id)}`, {
             replace: true
         })
     }
-
+    const separateString = (str) => {
+       const res = str.split("/")
+        console.log("separate", res)
+        return res
+    }
 
     return (
         <Layout>
@@ -75,17 +80,42 @@ export default function ProductTemplate(props) {
                                 {product?.variants.length > 1 && 
                                     <div className="mt-5">
                                         <label for="location" class="block text-lg leading-5 font-medium text-gray-700">Select Variant</label>
-                                        <select 
-                                            onChange={handleVariantChange}
-                                            value={selectedVariant.id}
-                                            className="mt-3 w-48 form-select block pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5"
-                                        >
-										{product?.variants.map (v => (
-                                                <option key={v.id} value={v.id}>
-                                                    {v.title}
-                                                </option>
-										))}
-                                        </select>
+                                        <div className="grid grid-cols-4 grid-flow-col gap-4 mt-4">
+                                        <div className="col-span-2">
+                                        <label class="block">
+                                          <span class="text-gray-700">Size: </span>
+                                          <select 
+                                              onChange={handleVariantChange}
+                                              value={selectedVariant.id}
+                                              className="mt-3 w-48 form-select pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5"
+                                          >
+                                            {product?.variants.map (v => (
+                                                    <option key={v.id} value={v.id}>
+                                                        {separateString(v.title)[0]}
+                                                    </option>
+                                            ))}
+                                          </select>
+                                        </label>
+                                        </div>
+
+                                        <div className="col-span-2">
+                                        <label class="block">
+                                            <span class="text-gray-700">Finish: </span>
+                                            <select 
+                                                onChange={handleVariantChange}
+                                                value={selectedVariant.id}
+                                                className="mt-3 w-48 form-select pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5"
+                                            >
+                                            {product?.variants.map (v => (
+                                                    <option key={v.id} value={v.id}>
+                                                        {separateString(v.title)[1]}
+                                                    </option>
+                                            ))}
+                                            </select>
+                                        </label>
+                                        
+                                        </div>
+                                        </div>
                                     </div>
                                 }
                                 {!!selectedVariant && (
